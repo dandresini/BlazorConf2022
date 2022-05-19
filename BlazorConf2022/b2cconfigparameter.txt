@@ -1,0 +1,16 @@
+CLient
+"AzureAdB2C": {
+    "Authority": "https://blazorconfITA.b2clogin.com/blazorconfITA.onmicrosoft.com/B2C_1_susi",
+    "TenantName": "blazorconfITA.onmicrosoft.com",
+    "ClientId": "4b80c7c5-3a11-4102-a48d-e8986dbfc8f8",
+    "ValidateAuthority": false
+  }
+Server
+ "AzureB2C": {
+    "Instance": "https://blazorconfITA.b2clogin.com/",
+    "ClientId": "383d8cb8-bb02-4918-a027-7c015ce7f19a",
+    "TenantId": "12cc9407-252a-4f18-9835-e0948a133ecc",
+    "Domain": "blazorconfITA.onmicrosoft.com",
+    "SignUpSignInPolicyId": "B2C_1_susi"
+    "Scopes": "api.write api.read"
+  },
