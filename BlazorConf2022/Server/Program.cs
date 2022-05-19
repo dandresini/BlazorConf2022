@@ -7,7 +7,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureB2C"));
+
+
+builder.Services.Configure<JwtBearerOptions>(
+JwtBearerDefaults.AuthenticationScheme, options =>
+{
+    options.TokenValidationParameters.NameClaimType = "name";
+});
+
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
