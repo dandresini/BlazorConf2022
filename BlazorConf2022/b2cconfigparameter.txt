@@ -1,5 +1,5 @@
 CLient
-"AzureAdB2C": {
+"AzureB2C": {
     "Authority": "https://blazorconfITA.b2clogin.com/blazorconfITA.onmicrosoft.com/B2C_1_susi",
     "TenantName": "blazorconfITA.onmicrosoft.com",
     "ClientId": "4b80c7c5-3a11-4102-a48d-e8986dbfc8f8",
