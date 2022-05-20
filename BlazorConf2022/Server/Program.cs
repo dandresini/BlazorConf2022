@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -16,6 +17,24 @@ JwtBearerDefaults.AuthenticationScheme, options =>
     options.TokenValidationParameters.NameClaimType = "name";
 });
 
+
+builder.Services.AddSingleton(implementationFactory =>
+{
+TokenCredentialOptions options = new TokenCredentialOptions
+{
+AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
+};
+
+var Configuration = builder.Configuration.GetSection("AzureB2C");
+
+var clientSecretCredential = new ClientSecretCredential(
+Configuration["TenantId"],
+Configuration["ClientId"],
+Configuration["ClientSecret"],
+options);
+
+return new Microsoft.Graph.GraphServiceClient(clientSecretCredential, new[] { "https://graph.microsoft.com/.default" });
+});
 
 
 builder.Services.AddControllersWithViews();
