@@ -14,3 +14,7 @@ Server
     "SignUpSignInPolicyId": "B2C_1_susi"
     "Scopes": "api.write api.read"
   },
+
+  	"CLientIdCustom": "f6d33d63-ed46-43e0-9759-6759796d11a8",
+    "ClientSecret": "OlF8Q~BXEPwnj6yv9nYtVtVeWCe2F6JXYRRCKbna",
+   
