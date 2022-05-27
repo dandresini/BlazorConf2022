@@ -15,8 +15,12 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().Cre
 
 builder.Services.AddMsalAuthentication(options =>
 {
-    builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
-    options.ProviderOptions.DefaultAccessTokenScopes.Add("api://api.id.uri/access_as_user");
+    builder.Configuration.Bind("AzureB2C", options.ProviderOptions.Authentication);
+
+    options.ProviderOptions.DefaultAccessTokenScopes.Add($"https://{builder.Configuration["AzureB2C:TenantName"]}/backendapi/api.write");
+    options.ProviderOptions.AdditionalScopesToConsent.Add($"https://{builder.Configuration["AzureB2C:TenantName"]}/backendapi/api.read");
+    options.ProviderOptions.LoginMode = "redirect";
+
 });
 
 await builder.Build().RunAsync();

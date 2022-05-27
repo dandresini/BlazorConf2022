@@ -1,0 +1,83 @@
+﻿@page "/GraphExample"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using BlazorConf2022.Shared;
+@using System.Security.Claims
+@using System.Net.Http.Headers
+@attribute [Authorize]
+@inject HttpClient Http
+@inject ILogger<GraphExample> logger
+
+<PageTitle>Graph Example</PageTitle>
+<h1>Graph Example</h1>
+<p>Questo componente mostra come chiamare graph explorer.</p>
+
+@if (userProfile is null || loading)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p>Informazioni da Graph Api</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Descrizione</th>
+                <th>Valore</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @if (userProfile is not null)
+            {
+                <tr>
+                    <td>Nome</td>
+                    <td>@userProfile.GivenName</td>
+                </tr>
+                <tr>
+                    <td>Cognome</td>
+                    <td>@userProfile.Surname</td>
+                </tr>
+                <tr>
+                    <td>Città</td>
+                    <td>@userProfile.City</td>
+                </tr>
+                <tr>
+                    <td>Codice Postale</td>
+                    <td>@userProfile.PostalCode</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>@userProfile.Email</td>
+                </tr>
+                <tr>
+                    <td>Animale Preferito</td>
+                    <td>@userProfile.AnimalePreferito</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private bool loading = false;
+    private UserProfile? userProfile;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUserProfile();
+    }
+
+    private async Task GetUserProfile()
+    {
+        try
+        {
+            logger.LogInformation("Call User me");
+            userProfile = await Http.GetFromJsonAsync<UserProfile>("api/user/me");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}

@@ -3,14 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorConf2022.Server", "Server\BlazorConf2022.Server.csproj", "{F09443F9-4522-4FF7-B92D-9DA1C042B6E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorConf2022.Server", "Server\BlazorConf2022.Server.csproj", "{F09443F9-4522-4FF7-B92D-9DA1C042B6E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorConf2022.Client", "Client\BlazorConf2022.Client.csproj", "{DE4FA6E3-CABB-4EA4-9A2E-6C67923C2E5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorConf2022.Client", "Client\BlazorConf2022.Client.csproj", "{DE4FA6E3-CABB-4EA4-9A2E-6C67923C2E5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorConf2022.Shared", "Shared\BlazorConf2022.Shared.csproj", "{5FD954CB-90E9-415F-BFA9-98817242D7B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorConf2022.Shared", "Shared\BlazorConf2022.Shared.csproj", "{5FD954CB-90E9-415F-BFA9-98817242D7B6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C37F2D88-A31F-4791-A3BC-2FEF8F4BF79A}"
 	ProjectSection(SolutionItems) = preProject
+		appoggio.html = appoggio.html
 		b2cconfigparameter.txt = b2cconfigparameter.txt
 	EndProjectSection
 EndProject

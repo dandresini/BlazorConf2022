@@ -8,7 +8,8 @@ namespace BlazorConf2022.Server.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    //[RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
+    [RequiredScope(new string[] { "api.read" })]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
