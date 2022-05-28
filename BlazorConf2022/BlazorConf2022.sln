@@ -10,10 +10,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorConf2022.Shared", "Shared\BlazorConf2022.Shared.csproj", "{5FD954CB-90E9-415F-BFA9-98817242D7B6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C37F2D88-A31F-4791-A3BC-2FEF8F4BF79A}"
-	ProjectSection(SolutionItems) = preProject
-		appoggio.html = appoggio.html
-		b2cconfigparameter.txt = b2cconfigparameter.txt
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
