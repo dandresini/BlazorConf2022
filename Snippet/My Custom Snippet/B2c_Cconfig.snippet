@@ -1,0 +1,27 @@
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>Configurazione Client B2C</Title>
+	    <Author>Damiano Andresini</Author>
+            <Description>Carichiamo le configurazioni B2C sul client</Description>
+            <Shortcut>_B2CClientConf</Shortcut>
+        </Header>
+        <Snippet>
+            <Code Language="CSharp">
+                <![CDATA[
+    				options.ProviderOptions.DefaultAccessTokenScopes.Add($dollar$"https://{builder.Configuration["AzureB2C:TenantName"]}/backendapi/api.write");
+    				options.ProviderOptions.AdditionalScopesToConsent.Add($dollar$"https://{builder.Configuration["AzureB2C:TenantName"]}/backendapi/api.read");
+    				options.ProviderOptions.LoginMode = "redirect";
+                  ]]>
+            </Code>
+            <Declarations>
+              <Literal Editable="false">
+                <ID>dollar</ID>
+                <ToolTip>Replace the dollar sign character</ToolTip>
+                <Default>$</Default>
+                <Function></Function>
+              </Literal>
+            </Declarations>
+        </Snippet>
+    </CodeSnippet>
+</CodeSnippets>

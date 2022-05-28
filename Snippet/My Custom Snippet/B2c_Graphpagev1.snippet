@@ -1,0 +1,97 @@
+<CodeSnippet Format="1.1.0" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+   <Header>
+      <Title>Pagina Graph Explorer Visualizza</Title>
+      <Author>Damiano Andresini</Author>
+      <Description>Visualizziamo il profilo utente su una pagina blazor</Description>
+      <Shortcut>B2CPageV1</Shortcut>
+   </Header>
+   <Snippet>
+ 
+      <Code Language="html">
+                <![CDATA[
+@page "/GraphExample"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using BlazorConf2022.Shared;
+@using System.Security.Claims
+@using System.Net.Http.Headers
+@using System.ComponentModel.DataAnnotations
+@using System.Reflection
+@attribute [Authorize]
+@inject HttpClient Http
+@inject ILogger<GraphExample> logger
+
+<PageTitle>Chiamata a graph api v1</PageTitle>
+<h1>Visualizziamo il profilo utente</h1>
+
+@if (userProfile is null || loading)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p>Informazioni da Graph Api</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Descrizione</th>
+                <th>Valore</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @if (userProfile is not null)
+            {
+                <tr>
+                    <td>Nome</td>
+                    <td>@userProfile.GivenName</td>
+                </tr>
+                <tr>
+                    <td>Cognome</td>
+                    <td>@userProfile.Surname</td>
+                </tr>
+                <tr>
+                    <td>Città</td>
+                    <td>@userProfile.City</td>
+                </tr>
+                <tr>
+                    <td>Codice Postale</td>
+                    <td>@userProfile.PostalCode</td>
+                </tr>
+                <tr>
+                    <td>Animale Preferito</td>
+                    <td>@userProfile.AnimalePreferito</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private bool loading = false;
+    private UserProfile? userProfile;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUserProfile();
+    }
+
+    private async Task GetUserProfile()
+    {
+        try
+        {
+            logger.LogInformation("Call User me");
+            userProfile = await Http.GetFromJsonAsync<UserProfile>("api/user/me");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+} 
+                  ]]>
+      </Code>
+   </Snippet>
+</CodeSnippet>

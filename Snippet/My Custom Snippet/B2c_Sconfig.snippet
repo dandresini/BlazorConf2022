@@ -1,0 +1,30 @@
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>Configurazione Server B2C</Title>
+	    <Author>Damiano Andresini</Author>
+            <Description>Carichiamo le configurazioni B2C sul Server</Description>
+            <Shortcut>_B2CServerConf</Shortcut>
+        </Header>
+        <Snippet>
+            <Code Language="CSharp">
+                <![CDATA[
+    builder.Services.Configure<JwtBearerOptions>(
+    JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.TokenValidationParameters.NameClaimType = "$ClaimType$";
+    });
+
+                  ]]>
+            </Code>
+            <Declarations>
+              <Literal Editable="true">
+                <ID>ClaimType</ID>
+                <ToolTip>Replace the NameClaimType</ToolTip>
+                <Default>name</Default>
+                <Function></Function>
+              </Literal>
+            </Declarations>
+        </Snippet>
+    </CodeSnippet>
+</CodeSnippets>

@@ -1,0 +1,53 @@
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>User Control lettura profilo</Title>
+	    <Author>Damiano Andresini</Author>
+            <Description>Carichiamo il metodo per la lettura del profilo utente da microsoft graph</Description>
+            <Shortcut>_B2CUserControllerRead</Shortcut>
+        </Header>
+        <Snippet>
+            <Code Language="CSharp">
+                <![CDATA[
+        [HttpGet]
+        [Route("me")]
+        [RequiredScope(new string[] { "api.read" })]
+        public async Task<IActionResult> Get()
+        {
+            //Richiesta informazioni utente
+            //var result = await graphClient.Users[User.FindFirst(ClaimTypes.NameIdentifier)!.Value]
+            //    .Request()
+            //    .GetAsync();
+
+            //Richiesta informazioni utente con select
+            var result = await graphClient.Users[User.FindFirst(ClaimTypes.NameIdentifier)!.Value]
+                .Request()
+                .Select($dollar$"Surname, GivenName, City, PostalCode,userPrincipalName, Mail,{ _customAttribute}AnimalePreferito")
+                .GetAsync();
+
+            var user = new UserProfile
+            {
+                Surname = result.Surname,
+                GivenName = result.GivenName,
+                City = result.City,
+                PostalCode = result.PostalCode,
+                AnimalePreferito = result.AdditionalData.ContainsKey($dollar$"{_customAttribute}AnimalePreferito") ?
+                                      (TipoAnimale) Convert.ToInt32( result.AdditionalData[$dollar$"{_customAttribute}AnimalePreferito"]!.ToString()) : null
+
+            };
+            return Ok(user);
+        }
+    	
+                  ]]>
+            </Code>
+            <Declarations>
+              <Literal Editable="false">
+                <ID>dollar</ID>
+                <ToolTip>Replace the dollar sign character</ToolTip>
+                <Default>$</Default>
+                <Function></Function>
+              </Literal>
+            </Declarations>
+        </Snippet>
+    </CodeSnippet>
+</CodeSnippets>

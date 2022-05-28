@@ -1,0 +1,41 @@
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>Configurazione Graph Api per Api</Title>
+	    <Author>Damiano Andresini</Author>
+            <Description>Carichiamo la configurazione del Factory per la creazione dell'oggetto che permetterà di eseguire le chiamate graph api</Description>
+            <Shortcut>_B2CGraphConf</Shortcut>
+        </Header>
+        <Snippet>
+            <Code Language="CSharp">
+                <![CDATA[
+    				builder.Services.AddSingleton(implementationFactory =>
+{
+    TokenCredentialOptions options = new TokenCredentialOptions
+    {
+        AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
+    };
+
+    var Configuration = builder.Configuration.GetSection("AzureB2C");
+
+    var clientSecretCredential = new ClientSecretCredential(
+        Configuration["TenantId"],
+        Configuration["ClientId"],
+        Configuration["ClientSecret"],
+        options);
+
+    return new Microsoft.Graph.GraphServiceClient(clientSecretCredential, new[] { "https://graph.microsoft.com/.default" });
+});
+                  ]]>
+            </Code>
+            <Declarations>
+              <Literal Editable="false">
+                <ID>dollar</ID>
+                <ToolTip>Replace the dollar sign character</ToolTip>
+                <Default>$</Default>
+                <Function></Function>
+              </Literal>
+            </Declarations>
+        </Snippet>
+    </CodeSnippet>
+</CodeSnippets>

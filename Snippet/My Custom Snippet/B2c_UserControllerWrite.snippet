@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>User Control modifica profilo</Title>
+	    <Author>Damiano Andresini</Author>
+            <Description>Carichiamo il metodo per modificare il profilo utente tramite  graph api</Description>
+            <Shortcut>_B2CUserControlWrite</Shortcut>
+        </Header>
+        <Snippet>
+            <Code Language="CSharp">
+                <![CDATA[
+
+        [HttpPost]
+        [Route("me/editprofile")]
+        [RequiredScope(new string[] { "api.write" })]
+        public async Task<IActionResult> Post(UserProfile user)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await graphClient.Users[User.FindFirst(ClaimTypes.NameIdentifier)!.Value]
+                .Request()
+                .UpdateResponseAsync(new User
+                {
+                    Surname = user.Surname,
+                    GivenName = user.GivenName,
+                    City = user.City,
+                    PostalCode = user.PostalCode,
+                    AdditionalData = new Dictionary<string, object>
+                    {
+                        { $dollar$"{_customAttribute}AnimalePreferito",user.AnimalePreferito is null ? "": ((int)user.AnimalePreferito).ToString()  }
+                    }
+
+                });
+
+                return result.StatusCode == System.Net.HttpStatusCode.NoContent || result.StatusCode == System.Net.HttpStatusCode.OK
+                       ? Ok() : BadRequest();
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
+
+                ]]>
+            </Code>
+            <Declarations>
+              <Literal Editable="false">
+                <ID>dollar</ID>
+                <ToolTip>Replace the dollar sign character</ToolTip>
+                <Default>$</Default>
+                <Function></Function>
+              </Literal>
+            </Declarations>
+        </Snippet>
+    </CodeSnippet>
+</CodeSnippets>

@@ -1,0 +1,59 @@
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>User Controller creazione Classe Shared</Title>
+	    <Author>Damiano Andresini</Author>
+            <Description>Carichiamo la classe shared per la gestione del profilo utente</Description>
+            <Shortcut>_B2CUserControllerCreate</Shortcut>
+        </Header>
+        <Snippet>
+            <Code Language="CSharp">
+                <![CDATA[
+    public enum TipoAnimale
+    {
+        [Display(Name = "Iguana")]
+        Iguana = 0,
+        [Display(Name = "Mio Marito")]
+        MioMarito = 1,
+        [Display(Name = "Cane")]
+        Cane = 2,
+        [Display(Name = "Gatto")]
+        Gatto = 3,
+        [Display(Name = "Nessun Animale")]
+        NessunAnimale = 4
+    }
+    
+    public class UserProfile : ICloneable
+    {
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Nome Obbligatorio")]
+        public string GivenName { get; set; } = "";
+
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Cognome Obbligatorio")]
+        public string Surname { get; set; } = "";
+
+        public string City { get; set; } = "";
+
+        public string PostalCode { get; set; } = "";
+
+        public string Email { get; set; } = "";
+
+        public TipoAnimale? AnimalePreferito { get; set; }
+
+        public object Clone()
+        {
+            return (UserProfile)MemberwiseClone();
+        }
+    }
+                  ]]>
+            </Code>
+            <Declarations>
+              <Literal Editable="false">
+                <ID>dollar</ID>
+                <ToolTip>Replace the dollar sign character</ToolTip>
+                <Default>$</Default>
+                <Function></Function>
+              </Literal>
+            </Declarations>
+        </Snippet>
+    </CodeSnippet>
+</CodeSnippets>

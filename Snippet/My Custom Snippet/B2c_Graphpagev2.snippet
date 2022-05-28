@@ -1,0 +1,182 @@
+<CodeSnippet Format="1.1.0" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+   <Header>
+      <Title>Pagina Graph Explorer Modifica</Title>
+      <Author>Damiano Andresini</Author>
+      <Description>Visualizziamo e Modifichiamo il profilo utente su una pagina blazor</Description>
+      <Shortcut>B2CPageV2</Shortcut>
+   </Header>
+   <Snippet>
+ 
+      <Code Language="html">
+                <![CDATA[
+@page "/GraphExample"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using BlazorConf2022.Shared;
+@using System.Security.Claims
+@using System.Net.Http.Headers
+@using System.ComponentModel.DataAnnotations
+@using System.Reflection
+@attribute [Authorize]
+@inject HttpClient Http
+@inject ILogger<GraphExample> logger
+
+<PageTitle>Chiamata a graph api v2</PageTitle>
+<h1>Visualizziamo e Modifichiamo il profilo utente</h1>
+
+@if (userProfile is null || loading)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <p>Informazioni da Graph Api</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Descrizione</th>
+                <th>Valore</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @if (userProfile is not null)
+            {
+                <tr>
+                    <td>Nome</td>
+                    <td>@userProfile.GivenName</td>
+                </tr>
+                <tr>
+                    <td>Cognome</td>
+                    <td>@userProfile.Surname</td>
+                </tr>
+                <tr>
+                    <td>Città</td>
+                    <td>@userProfile.City</td>
+                </tr>
+                <tr>
+                    <td>Codice Postale</td>
+                    <td>@userProfile.PostalCode</td>
+                </tr>
+                <tr>
+                    <td>Animale Preferito</td>
+                    <td>@userProfile.AnimalePreferito</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <p>
+            <label>
+                Nome:
+                <InputText @bind-Value="editUserProfile.GivenName" />
+            </label>
+        </p>
+
+        <p>
+            <label>
+                Cognome:
+                <InputText @bind-Value="editUserProfile.Surname" />
+            </label>
+        </p>
+        <p>
+            <label>
+                Città:
+                <InputText @bind-Value="editUserProfile.City" />
+            </label>
+        </p>
+
+        <p>
+            <label>
+                Codice Postale:
+                <InputText @bind-Value="editUserProfile.PostalCode" />
+            </label>
+        </p>
+         <p>
+            <label>
+                Animale Preserito:
+                <InputSelect @bind-Value="editUserProfile.AnimalePreferito" >
+                     <option value="">Select...</option>
+                    @foreach (var value in Enum.GetValues(typeof(TipoAnimale)))
+                    {
+                        <option value="@value" >@DiplayEnumName((TipoAnimale)value)</option>
+                    }
+                </InputSelect>
+            </label>
+        </p>
+
+        <button type="submit">Submit</button>
+    </EditForm>
+
+}
+
+@code {
+    private bool loading = false;
+    private UserProfile? userProfile;
+    
+    private EditContext? editContext;
+    private UserProfile editUserProfile = new UserProfile();
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUserProfile();
+        
+        editContext = new EditContext(editUserProfile);
+    }
+
+    private async Task GetUserProfile()
+    {
+        try
+        {
+            logger.LogInformation("Call User me");
+            userProfile = await Http.GetFromJsonAsync<UserProfile>("api/user/me");
+            
+            if (userProfile is not null)
+                editUserProfile =(UserProfile) userProfile.Clone();
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+    
+    protected string DiplayEnumName(TipoAnimale value){
+        return value.GetType()?
+                    .GetMember(value.ToString())?
+                    .First()?
+                    .GetCustomAttribute<DisplayAttribute>()?
+                    .Name!;
+    }
+    
+    private async Task HandleValidSubmit()
+    {
+        if (editContext != null && editContext.Validate())
+        {
+            logger.LogInformation("HandleValidSubmit called");
+            loading = true;
+            try
+            {
+                logger.LogInformation("Call User me");
+                var result = await Http.PostAsJsonAsync<UserProfile>("api/user/me/editprofile",editUserProfile);
+                logger.LogInformation("Ricarico User Profile se la modifica è andata a buon fine");
+                if (result.IsSuccessStatusCode)
+                    await GetUserProfile();
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
+            loading = false;   
+        }
+        
+    }
+} 
+                  ]]>
+      </Code>
+   </Snippet>
+</CodeSnippet>
