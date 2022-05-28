@@ -84,4 +84,9 @@ Durante la presentazione non sono riuscito ad attivare l'IDP di Twitter perchè 
 e non 
 
     https://blazorconfITA.b2clogin.com/blazorconfITA.onmicrosoft.com/b2c_1_susi/oauth1/authresp
-    
+
+### Documentazione ufficiale di Azure B2C sito Microsoft
+<https://docs.microsoft.com/en-us/aspnet/core/blazor/security/webassembly/hosted-with-azure-active-directory-b2c?view=aspnetcore-6.0>
+
+### Articolo su portale Blazordevita
+<https://blazordev.it/articoli/autenticazione-con-azure-ad-b2c-in-blazor>
