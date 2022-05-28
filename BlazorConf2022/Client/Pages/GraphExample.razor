@@ -4,14 +4,15 @@
 @using BlazorConf2022.Shared;
 @using System.Security.Claims
 @using System.Net.Http.Headers
+@using System.ComponentModel.DataAnnotations
+@using System.Reflection
 @attribute [Authorize]
 @inject HttpClient Http
 @inject ILogger<GraphExample> logger
 
-<PageTitle>Graph Example</PageTitle>
-<h1>Graph Example</h1>
-<p>Questo componente mostra come chiamare graph explorer.</p>
-
+<PageTitle>Chiamata a graph api v3</PageTitle>
+<h1>Visualizziamo e Modifichiamo il profilo utente </h1>
+<h2>Visualizziamo le informazioni dell'identity token </h2>
 @if (userProfile is null || loading)
 {
     <p><em>Loading...</em></p>
@@ -47,26 +48,144 @@ else
                     <td>@userProfile.PostalCode</td>
                 </tr>
                 <tr>
-                    <td>Email</td>
-                    <td>@userProfile.Email</td>
-                </tr>
-                <tr>
                     <td>Animale Preferito</td>
-                    <td>@userProfile.AnimalePreferito</td>
+                    <td>@(userProfile.AnimalePreferito is not null ? DiplayEnumName(userProfile.AnimalePreferito.Value) :"")</td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <p>Informazioni da Claim</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Descrizione</th>
+                <th>Valore</th>
+            </tr>
+
+        </thead>
+        <tbody>
+            @if (claimUserProfile != null)
+            {
+                <tr>
+                    <td>Nome</td>
+                    <td>@claimUserProfile.GivenName</td>
+                </tr>
+                <tr>
+                    <td>Cognome</td>
+                    <td>@claimUserProfile.Surname</td>
+                </tr>
+                <tr>
+                    <td>Città</td>
+                    <td>@claimUserProfile.City</td>
+                </tr>
+                <tr>
+                    <td>Codice Postale</td>
+                    <td>@claimUserProfile.PostalCode</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>@claimUserProfile.Email</td>
+                </tr>
+                <tr>
+                    <td>Animale Preferito</td>
+                    <td>@(claimUserProfile.AnimalePreferito is not null ? DiplayEnumName(claimUserProfile.AnimalePreferito.Value) :"")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <EditForm EditContext="@editContext" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <p>
+            <label>
+                Nome:
+                <InputText @bind-Value="editUserProfile.GivenName" />
+            </label>
+        </p>
+
+        <p>
+            <label>
+                Cognome:
+                <InputText @bind-Value="editUserProfile.Surname" />
+            </label>
+        </p>
+        <p>
+            <label>
+                Città:
+                <InputText @bind-Value="editUserProfile.City" />
+            </label>
+        </p>
+
+        <p>
+            <label>
+                Codice Postale:
+                <InputText @bind-Value="editUserProfile.PostalCode" />
+            </label>
+        </p>
+        <p>
+            <label>
+                Animale Preserito:
+                <InputSelect @bind-Value="editUserProfile.AnimalePreferito">
+                    <option value="">Select...</option>
+                    @foreach (var value in Enum.GetValues(typeof(TipoAnimale)))
+                    {
+                    <option value="@value">@DiplayEnumName((TipoAnimale)value)</option>
+                    }
+            </InputSelect>
+        </label>
+    </p>
+
+    <button type="submit">Submit</button>
+</EditForm>
+
 }
 
 @code {
     private bool loading = false;
     private UserProfile? userProfile;
 
+    private EditContext? editContext;
+    private UserProfile editUserProfile = new UserProfile();
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationStateTask{ get; set; }
+    private UserProfile claimUserProfile = new UserProfile();
+
+
     protected override async Task OnInitializedAsync()
     {
         await GetUserProfile();
+        editContext = new EditContext(editUserProfile);
+
+        await GetUserFromClaim();
     }
+
+    private async Task GetUserFromClaim()
+    {
+        var authState = await authenticationStateTask!;
+
+        var user = authState.User;
+
+        if (user.Identity!.IsAuthenticated)
+        {
+            var claims = user.Claims;
+
+            claimUserProfile = new UserProfile
+                {
+                    GivenName = claims.FirstOrDefault(c => c.Type == "given_name")?.Value ?? "",
+                    Surname = claims.FirstOrDefault(c => c.Type == "family_name")?.Value ?? "",
+                    Email = claims.FirstOrDefault(c => c.Type == "emails")?.Value ?? "",
+                    PostalCode = claims.FirstOrDefault(c => c.Type == "postalCode")?.Value ?? "",
+                    City = claims.FirstOrDefault(c => c.Type == "city")?.Value ?? "",
+                };
+            if (claims.FirstOrDefault(c => c.Type == "extension_AnimalePreferito") is not null)
+                claimUserProfile.AnimalePreferito = (TipoAnimale)Convert.ToInt32(claims.First(c => c.Type == "extension_AnimalePreferito").Value);
+
+        }
+    }
+
 
     private async Task GetUserProfile()
     {
@@ -74,10 +193,48 @@ else
         {
             logger.LogInformation("Call User me");
             userProfile = await Http.GetFromJsonAsync<UserProfile>("api/user/me");
+
+            if (userProfile is not null)
+                editUserProfile = (UserProfile)userProfile.Clone();
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
     }
-}
+
+    protected string DiplayEnumName(TipoAnimale value)
+    {
+        return value.GetType()?
+        .GetMember(value.ToString())?
+        .First()?
+        .GetCustomAttribute<DisplayAttribute>
+            ()?
+            .Name!;
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (editContext != null && editContext.Validate())
+        {
+            logger.LogInformation("HandleValidSubmit called");
+            loading = true;
+            try
+            {
+                logger.LogInformation("Call User me");
+                var result = await Http.PostAsJsonAsync<UserProfile>
+                    ("api/user/me/editprofile", editUserProfile);
+                logger.LogInformation("Ricarico User Profile se la modifica è andata a buon fine");
+                if (result.IsSuccessStatusCode)
+                    await GetUserProfile();
+            }
+            catch (AccessTokenNotAvailableException exception)
+            {
+                exception.Redirect();
+            }
+            loading = false;
+        }
+
+    }
+                    }
+

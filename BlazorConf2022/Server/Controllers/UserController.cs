@@ -27,6 +27,7 @@ namespace BlazorConf2022.Server.Controllers
 
 
 
+
         [HttpGet]
         [Route("me")]
         [RequiredScope(new string[] { "api.read" })]
@@ -40,7 +41,7 @@ namespace BlazorConf2022.Server.Controllers
             //Richiesta informazioni utente con select
             var result = await graphClient.Users[User.FindFirst(ClaimTypes.NameIdentifier)!.Value]
                 .Request()
-                .Select($"Surname, GivenName, City, PostalCode, Mail,{ _customAttribute}AnimalePreferito")
+                .Select($"Surname, GivenName, City, PostalCode,userPrincipalName, Mail,{ _customAttribute}AnimalePreferito")
                 .GetAsync();
 
             var user = new UserProfile
@@ -49,15 +50,46 @@ namespace BlazorConf2022.Server.Controllers
                 GivenName = result.GivenName,
                 City = result.City,
                 PostalCode = result.PostalCode,
-                Email = result.Mail,
                 AnimalePreferito = result.AdditionalData.ContainsKey($"{_customAttribute}AnimalePreferito") ?
-                                        result.AdditionalData[$"{_customAttribute}AnimalePreferito"].ToString()! : "-1"
+                                      (TipoAnimale)Convert.ToInt32(result.AdditionalData[$"{_customAttribute}AnimalePreferito"]!.ToString()) : null
 
             };
             return Ok(user);
         }
 
 
+
+
+        [HttpPost]
+        [Route("me/editprofile")]
+        [RequiredScope(new string[] { "api.write" })]
+        public async Task<IActionResult> Post(UserProfile user)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await graphClient.Users[User.FindFirst(ClaimTypes.NameIdentifier)!.Value]
+                .Request()
+                .UpdateResponseAsync(new User
+                {
+                    Surname = user.Surname,
+                    GivenName = user.GivenName,
+                    City = user.City,
+                    PostalCode = user.PostalCode,
+                    AdditionalData = new Dictionary<string, object>
+                    {
+                        { $"{_customAttribute}AnimalePreferito",user.AnimalePreferito is null ? "": ((int)user.AnimalePreferito).ToString()  }
+                    }
+
+                });
+
+                return result.StatusCode == System.Net.HttpStatusCode.NoContent || result.StatusCode == System.Net.HttpStatusCode.OK
+                       ? Ok() : BadRequest();
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+        }
 
     }
 }
