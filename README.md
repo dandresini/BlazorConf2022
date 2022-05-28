@@ -82,5 +82,6 @@ Durante la presentazione non sono riuscito ad attivare l'IDP di Twitter perchè 
     https://blazorconfita.b2clogin.com/blazorconfita.onmicrosoft.com/b2c_1_susi/oauth1/authresp
 
 e non 
+
     https://blazorconfITA.b2clogin.com/blazorconfITA.onmicrosoft.com/b2c_1_susi/oauth1/authresp
     
