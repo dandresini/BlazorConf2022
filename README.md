@@ -77,7 +77,7 @@ Assicuratevi che nella parte Properties->launchSettings.json del progetto **Blaz
 
 ## Configurazione dell'Identity Provider su Twitter
 
-Durante la presentazione non sono riuscito ad attivare l'IDP di Twitter perchè come avevo spiegato in precedenza, ma poi non ho messo in pratica :-), nella sezione App del portale developer di twitter <https://developer.twitter.com/> si doveva inserire l'intera URI della callback in minuscolo:
+Durante la presentazione non sono riuscito ad attivare l'IDP di Twitter perchè come avevo spiegato in precedenza, ma poi non ho messo in pratica :-), nella sezione App del portale developer di twitter <https://developer.twitter.com/> si deve inserire in minuscolo l'intera URI della callback:
 
     https://blazorconfita.b2clogin.com/blazorconfita.onmicrosoft.com/b2c_1_susi/oauth1/authresp
 
